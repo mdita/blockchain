@@ -8,18 +8,29 @@ class Block {
 		this.data = data;
 		this.previousHash = previousHash;
 		this.hash = this.calculateHash();
+		this.nounce = 0;
 	}
 
 	calculateHash() {
-		const message = this.index + this.previousHash + this.timestamp + JSON.stringify(this.data);
+		const message = this.index + this.previousHash + this.timestamp + this.nounce + JSON.stringify(this.data);
 
 		return SHA256(message).toString();
+	}
+
+	mineNewBlock(difficulty) {
+		while (this.hash.substring(0, difficulty) !== Array(difficulty + 1).join('0')) {
+			this.hash = this.calculateHash();
+			this.nounce++;
+		}
+
+		console.log('Block with hash: ' + this.hash + ' was mined.');
 	}
 }
 
 class Blockchain {
 	constructor() {
 		this.chain  = [ this.createGenesisBlock() ]
+		this.difficulty = process.env.MINE_DIFFICUlTY || 2;
 	}
 
 	createGenesisBlock() {
@@ -34,7 +45,7 @@ class Blockchain {
 
 	addBlock(newBlock) {
 		newBlock.previousHash = this.getTheLatestBlock().hash;
-		newBlock.hash = newBlock.calculateHash();
+		newBlock.mineNewBlock(this.difficulty);
 		this.chain.push(newBlock);
 	}
 
@@ -67,19 +78,24 @@ class Blockchain {
 	}
 }
 
+// let testCoin = new Blockchain();
+// testCoin.addBlock(new Block(1, '10/07/2019', { money: 10 }));
+// testCoin.addBlock(new Block(2, '11/07/2019', { money: 11 }));
+// testCoin.addBlock(new Block(3, '12/07/2019', { money: 12 }));
+// testCoin.addBlock(new Block(4, '13/07/2019', { money: 13 }));
+// testCoin.addBlock(new Block(5, '14/07/2019', { money: 14 }));
+
+
+// console.log(JSON.stringify(testCoin, null, 4)); // display our test blockchain
+// console.log('is valid ? : ' + testCoin.isBlockchainValid()); // display if the block chain is valid
+
+// // let's temper the blockchain by changing the amount of money for a block
+
+// testCoin.chain[4].data.money = 15;
+// console.log(JSON.stringify(testCoin, null, 4));
+// console.log('is valid ? : ' + testCoin.isBlockchainValid()); // check again if the blockchain is valid
+
 let testCoin = new Blockchain();
 testCoin.addBlock(new Block(1, '10/07/2019', { money: 10 }));
 testCoin.addBlock(new Block(2, '11/07/2019', { money: 11 }));
-testCoin.addBlock(new Block(3, '12/07/2019', { money: 12 }));
-testCoin.addBlock(new Block(4, '13/07/2019', { money: 13 }));
-testCoin.addBlock(new Block(5, '14/07/2019', { money: 14 }));
-
-
-console.log(JSON.stringify(testCoin, null, 4)); // display our test blockchain
-console.log('is valid ? : ' + testCoin.isBlockchainValid()); // display if the block chain is valid
-
-// let's temper the blockchain by changing the amount of money for a block
-
-testCoin.chain[4].data.money = 15;
 console.log(JSON.stringify(testCoin, null, 4));
-console.log('is valid ? : ' + testCoin.isBlockchainValid()); // check again if the blockchain is valid
