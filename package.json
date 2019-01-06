@@ -1,0 +1,21 @@
+{
+  "name": "blockchain",
+  "version": "1.0.0",
+  "description": "A JavaScript Blockchain Test",
+  "main": "main.js",
+  "dependencies": {
+    "crypto-js": "^3.1.9-1",
+    "moment": "^2.23.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node main.js"
+  },
+  "keywords": [
+    "javascript",
+    "blockchain",
+    "crypto"
+  ],
+  "author": "Mihai Dita",
+  "license": "MIT"
+}
